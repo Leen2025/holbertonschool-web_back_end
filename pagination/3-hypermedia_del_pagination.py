@@ -48,8 +48,7 @@ class Server:
             self.__indexed_dataset = {i: dataset[i] for i in range(len(dataset))}
         return self.__indexed_dataset
 
-    def get_hyper_index(self, index: int = 0,
-                        page_size: int = 10) -> Dict[str, Any]:
+    def get_hyper_index(self, index: int = 0, page_size: int = 10) -> Dict[str, Any]:
         """
         Return a deletion-resilient hypermedia pagination dictionary.
 
@@ -84,5 +83,5 @@ class Server:
             "index": index,
             "next_index": next_index,
             "page_size": len(data),
-            "data": data
+            "data": data,
         }
