@@ -1,26 +1,25 @@
-from typing import Dict
+#!/usr/bin/env python3
+"""Deletion-resilient hypermedia pagination
+"""
 
-def get_hyper_index(self, index: int = None, page_size: int = 10) -> Dict:
-    """Return a page of data starting from `index` with deletion resilience"""
-    assert isinstance(index, int) and index >= 0
-    indexed_data = self.indexed_dataset()
-    assert index < len(indexed_data)
+import csv
+import math
+from typing import List, Dict, Tuple
 
-    data = []
-    current_index = index
 
-    # Collect page_size items, skipping missing keys
-    while len(data) < page_size and current_index in indexed_data:
-        data.append(indexed_data[current_index])
-        current_index += 1
-        # Skip missing indices
-        while current_index not in indexed_data and current_index < max(indexed_data.keys()) + 1:
-            current_index += 1
+class Server:
+    """Server class to paginate a database of popular baby names.
+    """
+    DATA_FILE = "Popular_Baby_Names.csv"
 
-    return {
-        "index": index,
-        "data": data,
-        "page_size": len(data),
-        "next_index": current_index
-    }
+    def __init__(self):
+        self.__dataset = None
+        self.__indexed_dataset = None
 
+
+        return {
+            "index": index,
+            "next_index": i,
+            "page_size": page_size,
+            "data": d
+        }
