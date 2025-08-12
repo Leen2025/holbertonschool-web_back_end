@@ -1,6 +1,0 @@
---2025-08-12 12:03:49--  https://s3.eu-west-3.amazonaws.com/hbtn.intranet/uploads/misc/2020/5/7d3576d97e7560ae85135cc214ffe2b3412c51d7.csv?X-Amz-Algorithm=AWS4-HMAC-SHA256
-Resolving s3.eu-west-3.amazonaws.com (s3.eu-west-3.amazonaws.com)... 16.12.20.1, 52.95.156.49
-Connecting to s3.eu-west-3.amazonaws.com (s3.eu-west-3.amazonaws.com)|16.12.20.1|:443... connected.
-HTTP request sent, awaiting response... 400 Bad Request
-2025-08-12 12:03:50 ERROR 400: Bad Request.
-
