@@ -1,13 +1,9 @@
-export default function taskBlock(trueOrFalse) {
-  const task = false;
-  const task2 = true;
+export default function getNeighborhoodsList() {
+  this.sanFranciscoNeighborhoods = ['SOMA', 'Union Square'];
 
-  /* eslint-disable no-unused-vars */
-  if (trueOrFalse) {
-    const task = true;
-    const task2 = false;
-  }
-  /* eslint-enable no-unused-vars */
-
-  return [task, task2];
+  const self = this;
+  this.addNeighborhood = (newNeighborhood) => {
+    self.sanFranciscoNeighborhoods.push(newNeighborhood);
+    return self.sanFranciscoNeighborhoods;
+  };
 }
