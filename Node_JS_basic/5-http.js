@@ -1,39 +1,64 @@
 const http = require('http');
-const url = require('url');
-const countStudents = require('./3-read_file_async');
+const fs = require('fs').promises;
+
+const database = process.argv[2];
+
+/**
+ * Helper function to count students asynchronously and return a string
+ */
+function getStudentsInfo(path) {
+  return fs.readFile(path, 'utf8')
+    .then((content) => {
+      const lines = content
+        .split('\n')
+        .filter((line) => line.trim() !== '');
+      const rows = lines.slice(1); // skip header
+
+      let output = `Number of students: ${rows.length}\n`;
+
+      const byField = {};
+
+      rows.forEach((row) => {
+        const cols = row.split(',');
+        if (cols.length >= 4) {
+          const firstName = cols[0].trim();
+          const field = cols[3].trim();
+          if (!byField[field]) byField[field] = [];
+          byField[field].push(firstName);
+        }
+      });
+
+      Object.keys(byField).sort().forEach((field) => {
+        output += `Number of students in ${field}: ${byField[field].length}. List: ${byField[field].join(', ')}\n`;
+      });
+
+      return output;
+    })
+    .catch(() => {
+      throw new Error('Cannot load the database');
+    });
+}
 
 const app = http.createServer((req, res) => {
-  const reqUrl = url.parse(req.url, true);
+  res.writeHead(200, { 'Content-Type': 'text/plain' });
 
-  if (reqUrl.pathname === '/') {
-    res.writeHead(200, { 'Content-Type': 'text/plain' });
+  if (req.url === '/') {
     res.end('Hello Holberton School!');
-  } else if (reqUrl.pathname === '/students') {
-    res.writeHead(200, { 'Content-Type': 'text/plain' });
+  } else if (req.url === '/students') {
     res.write('This is the list of our students\n');
-
-    const databasePath = process.argv[2];
-
-    if (!databasePath) {
-      res.end('Cannot load the database');
-    } else {
-      countStudents(databasePath)
-        .then((output) => {
-          res.write(output);
-          res.end();
-        })
-        .catch(() => {
-          res.end('Cannot load the database');
-        });
-    }
+    getStudentsInfo(database)
+      .then((info) => {
+        res.end(info);
+      })
+      .catch((err) => {
+        res.end(err.message);
+      });
   } else {
-    res.writeHead(404, { 'Content-Type': 'text/plain' });
-    res.end('Not Found');
+    res.statusCode = 404;
+    res.end('Not found');
   }
 });
 
-app.listen(1245, () => {
-  console.log('Server is listening on port 1245');
-});
+app.listen(1245);
 
 module.exports = app;
