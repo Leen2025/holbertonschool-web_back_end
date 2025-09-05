@@ -1,4 +1,4 @@
-xpress = require('express');
+const express = require('express');
 const fs = require('fs').promises;
 
 const database = process.argv[2];
