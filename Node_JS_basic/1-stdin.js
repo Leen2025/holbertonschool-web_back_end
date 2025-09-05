@@ -1,11 +1,14 @@
-process.stdout.write("Welcome to Holberton School, what is your name? ");
-process.stdin.on ("data", function(input)
-{
-const name = input.toString().trim();
+process.stdout.write('Welcome to Holberton School, what is your name?\n');
 
-console.log("Your name is: "+ name);
-process.exit();
+process.stdin.setEncoding('utf8');
+
+process.stdin.on('readable', () => {
+  const chunk = process.stdin.read();
+  if (chunk !== null) {
+    process.stdout.write(`Your name is: ${chunk}`);
+  }
 });
-process.on("exit", function() {
-  console.log("This important software is now closing");
+
+process.stdin.on('end', () => {
+  process.stdout.write('This important software is now closing\n');
 });
