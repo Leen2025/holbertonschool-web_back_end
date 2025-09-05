@@ -2,30 +2,34 @@ const express = require('express');
 const countStudents = require('./3-read_file_async');
 
 const app = express();
+
 app.get('/', (req, res) => {
   res.send('Hello Holberton School!');
 });
 
 app.get('/students', async (req, res) => {
-  const dbpath = process.argv[2];
-  let o = 'This is the list of our students\n';
-  if (!dbpath) {
-    o += 'Cannot load the database';
-    res.status(500).send(o);
+  const dbPath = process.argv[2];
+  let output = 'This is the list of our students\n';
+
+  if (!dbPath) {
+    res.status(500).send('Cannot load the database');
     return;
   }
+
   try {
-    const studentsData = await countStudents(dbpath);
-    o += studentsData;
-    res.send(o);
+    const studentsData = await countStudents(dbPath);
+    output += studentsData;
+    res.send(output);
   } catch (error) {
-    o += 'Cannot load the database';
-    res.send(o);
+    res.status(500).send('Cannot load the database');
   }
 });
 
-app.listen(1245, () => {
-  console.log('Express server is listening on port 1245');
-});
+// فقط شغّل السيرفر إذا الملف تم تشغيله مباشرة
+if (require.main === module) {
+  app.listen(1245, () => {
+    console.log('Express server is listening on port 1245');
+  });
+}
 
 module.exports = app;
