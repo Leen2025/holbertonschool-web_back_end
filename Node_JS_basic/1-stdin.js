@@ -4,9 +4,8 @@ process.stdin.on ("data", function(input)
 const name = input.toString().trim();
 
 console.log("Your name is: "+ name);
-process.stdout.write("This important software is now closing");
-
 process.exit();
-
 });
-
+process.on("exit", function() {
+  console.log("This important software is now closing");
+});
