@@ -1,5 +1,6 @@
 // function prints the str argument
-function displayMessage(massege){
-console.log(massege);
+function displayMessage(msg) {
+  console.log(msg);
 }
+
 module.exports = displayMessage;
