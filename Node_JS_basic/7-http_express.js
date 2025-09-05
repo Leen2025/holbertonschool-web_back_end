@@ -1,55 +1,49 @@
 const express = require('express');
-const fs = require('fs').promises;
-
-const database = process.argv[2];
-
-/**
- * Reads the CSV database asynchronously and returns formatted student info
- */
-async function getStudentsInfo(path) {
-  try {
-    const content = await fs.readFile(path, 'utf8');
-    const lines = content.split('\n').filter((line) => line.trim() !== '');
-    const rows = lines.slice(1); // skip header
-
-    let output = `Number of students: ${rows.length}\n`;
-
-    const byField = {};
-    rows.forEach((row) => {
-      const cols = row.split(',');
-      if (cols.length >= 4) {
-        const firstName = cols[0].trim();
-        const field = cols[3].trim();
-        if (!byField[field]) byField[field] = [];
-        byField[field].push(firstName);
-      }
-    });
-
-    Object.keys(byField).sort().forEach((field) => {
-      output += `Number of students in ${field}: ${byField[field].length}. List: ${byField[field].join(', ')}\n`;
-    });
-
-    return output;
-  } catch (err) {
-    throw new Error('Cannot load the database');
-  }
-}
+const fs = require('fs');
 
 const app = express();
+const DB_FILE = process.argv[2];
+
+const countStudents = (path) => new Promise((resolve, reject) => {
+  fs.readFile(path, 'utf8', (err, data) => {
+    if (err) {
+      reject(new Error('Cannot load the database'));
+      return;
+    }
+    const lines = data.trim().split('\n');
+    const studentLines = lines.slice(1);
+    const validStudents = studentLines.filter((line) => line.trim() !== '');
+
+    let responseText = `Number of students: ${validStudents.length}`;
+    const fields = {};
+    for (const student of validStudents) {
+      const [firstname, , , field] = student.split(',');
+      if (field) {
+        if (!fields[field]) fields[field] = [];
+        fields[field].push(firstname);
+      }
+    }
+    for (const field in fields) {
+      if (Object.prototype.hasOwnProperty.call(fields, field)) {
+        responseText += `\nNumber of students in ${field}: ${fields[field].length}. List: ${fields[field].join(', ')}`;
+      }
+    }
+    resolve(responseText);
+  });
+});
 
 app.get('/', (req, res) => {
   res.send('Hello Holberton School!');
 });
 
-app.get('/students', async (req, res) => {
-  let output = 'This is the list of our students\n';
-  try {
-    const info = await getStudentsInfo(database);
-    output += info;
-    res.send(output);
-  } catch (err) {
-    res.status(500).send(err.message);
-  }
+app.get('/students', (req, res) => {
+  countStudents(DB_FILE)
+    .then((data) => {
+      res.send(`This is the list of our students\n${data}`);
+    })
+    .catch((err) => {
+      res.send(`This is the list of our students\n${err.message}`);
+    });
 });
 
 app.listen(1245);
